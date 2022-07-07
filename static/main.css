@@ -5,12 +5,12 @@
   }
   
   body {
-    background: #292929;
+    background: #5f5f5f;
     font-family: 'calibri';
   }
   
   header {
-    background: #03A9F4;
+    background: #2c799c;
     width: 100%;
     clear: both;
     content:'';
@@ -35,7 +35,7 @@
   
   nav ul li a {
     text-decoration: none;
-    color: #444;
+    color: rgb(133, 133, 133);
     font-weight: bold;
   }
   
@@ -52,4 +52,4 @@
   
   nav ul li a:hover::before {
     width: 100%;
-  }s
+  }

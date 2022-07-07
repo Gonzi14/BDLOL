@@ -5,29 +5,27 @@
 {% endblock %}
 {% block body %}
 <table class="table table-striped">
-    <tr class="bg-info">
-        <th>Nombre</th>
-        <th>Puntos</th>
-    </tr>
-    <tbody id="tabla">
-
+    <thead>
+        <tr class="bg-info">
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Puntos</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for champ in data %}
+        <tr>
+            <td>
+                {{champ.id}}
+            </td>
+            <td>
+                {{champ.name}}
+            </td>
+            <td>
+                {{champ.points}}
+            </td>
+        </tr>
+        {% endfor %}
     </tbody>
 </table>
-<script>
-    buildTable("/points.json")
-
-    function buildTable(data){
-        var table = document.getElementById('myTable')
-
-        for (var i = 0; i < data.length; i++){
-            var row = `<tr>
-                            <td>${data[i]}</td>
-                            <td>${data[i]}</td>
-                    </tr>`
-            table.innerHTML += row
-
-
-        }
-    }
-</script>
 {% endblock %}

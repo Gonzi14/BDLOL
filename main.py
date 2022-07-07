@@ -1,4 +1,6 @@
+from ast import Is
 from csv import writer, DictWriter
+from ctypes.wintypes import PINT
 from filecmp import cmp
 import sys
 from sqlite3 import Row
@@ -7,6 +9,7 @@ from tkinter import Menu, ttk
 import matplotlib.pyplot as plt
 # Para modificar csv
 import pandas as pd
+from pyparsing import punc8bit
 # Para APIs
 from riotwatcher import LolWatcher, ApiError
 import requests
@@ -41,56 +44,33 @@ def matches(puuid):
 
 def bar(dataBase):
     # Se hace 
+    print(dataBase.values())
     plt.style.use('ggplot')
     plt.bar(dataBase.keys(), dataBase.values(), color='#e36685')
     plt.grid()
     plt.show()
 
 def api(API):
-    champsDicPoints = {}
+    champsDicPoints = []
     r = requests.get(API)
     data = json.loads(r.text)
+    champsDictName = getAllChampions()
     # Se consigue de la api los datos necesarios y se pasan a modo json
     for item in data:
-        ID = item['championId']
+        id = item['championId']
         points = item['championPoints']
-        champsDicPoints.update({ID: points})
-        # Se crea un diccionario con los puntos y los ID de los champs
-    champsDictName = getAllChampions()
-    pointsDictN = sort(champsDicPoints)
-    nameDictN = sort(champsDictName)
-    # Se ordenan los diccionarios por el ID, para que esten en sincronia
-    for i in nameDictN:
-        # Por cada campeon que hay, que se modifique la Key de todo el diccionario, cambiandola por el nombre del otro diccionario
-        try:
-            pointsDictN[nameDictN[i]] = pointsDictN[i]
-            del pointsDictN[i]
-        except:
-            # Si hay un champ que no tiene puntos, que se escriba 0
-            pointsDictN[nameDictN[i]] = 0
-    toCSV(pointsDictN)
+        champsDicPoints.append({ 'id' : id , 'points' : points, 'name' : champsDictName[id]})
     # Se pasa a .CSV para tenerlo guardado
-    ToJson(pointsDictN)
-    bar(pointsDictN)
+    ToJson(champsDicPoints)
+    #df = pd.DataFrame(pointsDictN)
+    #print(df)
+    #bar(pointsDictN)
     # Se grafica
 
 def ToJson(data):
-    with open('points.json', "w") as jsonFile:
+    # Pasa diccionarios a JSON              
+    with open('./static/points.json', "w") as jsonFile:
         jsonFile.write(json.dumps(data))
-
-def sort(dictionary):
-    # Ordenamiento de diccionarios
-    items = dictionary.items()
-    itemsSorted = sorted(items)
-    newDict = dict((x, y) for x, y in itemsSorted)
-    return newDict
-
-def toCSV(dict):
-    # Pasa diccionarios a CSV
-    with open('Campeones.csv', 'w') as f:
-        writer = DictWriter(f, dict.keys())
-        writer.writeheader()
-        writer.writerow(dict)
 
 def getAllChampions():
     champsDict = {}
