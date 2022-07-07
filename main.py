@@ -20,7 +20,7 @@ import time
 import json
 
 # Informacion general de las APIs
-api_key = 'RGAPI-646391cb-df01-494c-aaab-f02654e6a3fd'
+api_key = ''
 watcher = LolWatcher(api_key)
 my_region = 'la2'
 me = watcher.summoner.by_name(my_region, 'JimCharles3')
