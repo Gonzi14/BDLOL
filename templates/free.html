@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block head %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<title>Free</title>
+{% endblock %}
+{% block body %}
+<div>
+    <table id="myTable" class="table table-striped">
+        <thead>
+            <tr class="bg-info">
+                <th>Id</th>
+                <th>Nombre</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for champ in dataMine %}
+            <tr>
+                <td>
+                    {{champ.id}}
+                </td>
+                <td>
+                    {{champ.name}}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

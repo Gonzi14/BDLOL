@@ -4,28 +4,54 @@
 <title>Tabla</title>
 {% endblock %}
 {% block body %}
-<table class="table table-striped">
-    <thead>
-        <tr class="bg-info">
-            <th>Id</th>
-            <th>Nombre</th>
-            <th>Puntos</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for champ in data %}
-        <tr>
-            <td>
-                {{champ.id}}
-            </td>
-            <td>
-                {{champ.name}}
-            </td>
-            <td>
-                {{champ.points}}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div>
+    <input type="text" id="Champs" name="Champ" placeholder="Filtar champs..." onkeyup="filter()"> 
+    <table id="myTable" class="table table-striped">
+        <thead>
+            <tr class="bg-info">
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Puntos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for champ in dataMine %}
+            <tr>
+                <td>
+                    {{champ.id}}
+                </td>
+                <td>
+                    {{champ.name}}
+                </td>
+                <td>
+                    {{champ.points}}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    function filter() {
+      // Declare variables
+      var input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("Champs");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("myTable");
+      tr = table.getElementsByTagName("tr");
+    
+      // Loop through all table rows, and hide those who don't match the search query
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[1];
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+    </script>
 {% endblock %}

@@ -11,17 +11,18 @@
     
 </head>
 <body>
-    <div class="menu">
-        <nav>
-            <ul class="menu">
-                <li><a href="#">Champs</a></li>
-                <li><a href="#">Info General</a></li>
-                <li><a href="#">Tu cuenta</a></li>
-                <li><a href="#">Champs gratis</a></li>
-                <li><a href="#">Putas</a></li>
-            </ul>
-        </nav>
-    </div>
+    <header>
+        <div class="menu">
+            <nav>
+                <ul class="menu">
+                    <li><a href="{{url_for('chart')}}">Grafico</a></li>
+                    <li><a href="#">Tu cuenta</a></li>
+                    <li><a href="{{url_for('free')}}">Champs gratis</a></li>
+                    <li><a href="{{url_for('table')}}">Tabla</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
     {% block body %}{% endblock %}
 </body>
 </html>
