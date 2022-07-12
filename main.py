@@ -1,6 +1,5 @@
 from ast import Is
 import csv
-from ctypes.wintypes import PINT
 from filecmp import cmp
 import sys
 from sqlite3 import Row
@@ -23,7 +22,7 @@ import json
 import math
 
 # Informacion general de las APIs
-api_key = 'RGAPI-646391cb-df01-494c-aaab-f02654e6a3fd'
+api_key = ''
 watcher = LolWatcher(api_key)
 my_region = 'la2'
 current_champ_list = watcher.data_dragon.champions('12.11.1')
@@ -74,6 +73,7 @@ def free():
 def api(name):
     me = watcher.summoner.by_name(my_region, name)
     summonerID = me['id']
+    print(summonerID)
     puuid = me['puuid']
     APIchampions = (f"https://{my_region}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/{summonerID}" + "?api_key=" + api_key)
     champsPoints = []
@@ -84,10 +84,12 @@ def api(name):
     for item in data:
         id = item['championId']
         points = item['championPoints']
-        champsPoints.append({ 'id' : id , 'points' : points, 'name' : champsDictName[id]})
+        mastery = item['championLevel']
+        chest = item['chestGranted']
+        champsPoints.append({ 'id' : id , 'points' : points, 'name' : champsDictName[id]['name'], 'mastery': mastery, 'chest': chest, 'roles':champsDictName[id]['tags']})
     # Se pasa a .JSON para tenerlo guardado
     ToJson(champsPoints, "points")
-    #df = pd.DataFrame(champsPoints)
+    df = pd.DataFrame(champsPoints)
     #bar(df)
     # Se grafica
 
@@ -113,10 +115,34 @@ def getAllChampions():
         #print(champion)
         id = int(champion['key'])
         name = champion['name']
-        champsDict.update({id : name})
+        tags = champion['tags']
+        champsDict[id] = ({'id' : id, 'name': name, 'tags': tags})
         # Se achica la data para que sea solo el ID y su nombre
     return champsDict
 
 #free()
-api("JimCharles3")
+#api("JimCharles3")
 #matches(puuid)
+
+
+def api2(name):
+    me = watcher.summoner.by_name(my_region, name)
+    summonerID = me['id']
+    print(summonerID)
+    puuid = me['puuid']
+    APIchampions = (f"https://{my_region}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/{summonerID}" + "?api_key=" + api_key)
+    champsPoints = []
+    r = requests.get(APIchampions)
+    data = json.loads(r.text)
+    champsDictName = getAllChampions()
+    # Se consigue de la api los datos necesarios y se pasan a modo json
+    for item in data:
+        id = item['championId']
+        points = item['championPoints']
+        mastery = item['championLevel']
+        chest = item['chestGranted']
+        champsPoints.append({'points' : points, 'nombre' : champsDictName[id]['name']})
+    # Se pasa a .JSON para tenerlo guardado
+    ToJson(champsPoints, "chart")
+
+api2("JimCharles3")

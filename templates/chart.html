@@ -1,40 +1,92 @@
 {% extends 'base.html' %}
 {% block head %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js" integrity="sha512-sW/w8s4RWTdFFSduOTGtk4isV1+190E/GghVffMA9XczdJ2MDzSzLEubKAs5h0wzgSJOQTRYyaz73L3d6RtJSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <title>chart</title>
 {% endblock %}
 {% block body %}
-<canvas id="champs" width="30" height=""></canvas>
-<script src="./static/points.json"></script>
+<div class = "graph" id="champs"></div>
+<script src="https://d3js.org/d3.v3.min.js"></script>
 <script>
-    //Chart.scaleService.updateScaleDefaults('linear', {
-                //ticks: {
-                    //min: 0
-                //}
-        //});
-    var chartData{
-        labels: [ {% for champ in dataMine %}  
-            {{champ.name}} 
-            {% endfor %}]
-            datasets: [
-              {
-                label: "points",
-                backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-                data: [ {% for champ in dataMine %}  
-            {{champ.points}} 
-            {% endfor %}]
-              }
-            ]
-        }
-    // get chart canvas
-var ctx = document.getElementById("champs").getContext("2d");
- 
- // create the chart using the chart canvas
- var myChart = new Chart(ctx, {
- type: 'bar',
- data: chartData,
- });
-    
+    var margin  = {top: 20, right: 20, bottom: 100, left: 60},
+        width   = 4000 - margin.left - margin.right,
+        height  = 800 - margin.top - margin.bottom,
+        x       = d3.scale.ordinal().rangeRoundBands([0,width], 0.5),
+        y       = d3.scale.linear().range([height,0]);
+
+//draw axis
+    var xAxis   = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+	var yAxis   = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .ticks(5)
+        .innerTickSize(-width)
+        .outerTickSize(5)
+        .tickPadding(10);
+
+ var svg     = d3.select("#champs")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.json("./static/chart.json", function (data)
+    {
+        x.domain(data.map(function (d)
+        {
+            return d.nombre;
+        }));
+
+        y.domain([0, d3.max(data, function (d)
+        {
+            return d.points;
+        })]);
+
+        svg.append("g")
+            //xAxis
+            .attr("class", "x axis")
+            .attr("transform", "translate(0, " + height + ")")
+            .call(xAxis)
+            .selectAll("text")
+            .style("text-anchor", "middle")
+            .attr("dx", "-0.5em")
+            .attr("dy", "-.55em")
+            .attr("y", 30)
+            .attr("transform","translate(-10,0)rotate(-45)" );
+            
+
+        svg.append("g")
+            //yAxis
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 5)
+            .attr("dy", "0.8em")
+            .attr("text-anchor", "end")
+            .text("Champs");
+
+        svg.selectAll("bar")
+            //data
+            .data(data)
+            .enter()
+            .append("rect")
+            .style("fill", "pink")
+            .attr("x", function(d)
+            {
+                return x(d.nombre);
+            })
+            .attr("width", x.rangeBand())
+            .attr("y", function (d)
+            {
+                return y(d.points);
+            })
+            .attr("height", function (d)
+            {
+                return height - y(d.points);
+            });
+})
 </script>
 {% endblock %}
